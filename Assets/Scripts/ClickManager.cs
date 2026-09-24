@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class ClickManager : MonoBehaviour
 {
+    private UIManager uiManager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        // Finds the UIManager script associated to the Canvas
+        uiManager = FindFirstObjectByType<UIManager>();
     }
 
     // Update is called once per frame
@@ -28,8 +31,23 @@ public class ClickManager : MonoBehaviour
                 if (component != null)
                 {
                     component.SelectComponent();
+                    Camera.main.GetComponent<CameraFocus>().DefineTarget(hit.transform);
+
+                    // Exibits the panel with the cliked component's information.
+                    if (uiManager != null) uiManager.ShowInformations(component);
                 }
-                  
+                else
+                {
+                    // If it hits an object that is not part of the motor.
+                    Camera.main.GetComponent<CameraFocus>().CleanTarget();
+                    if (uiManager != null) uiManager.HidePanel();
+                }
+            }
+            else
+            {
+                // It it doesn't hit anything (void)
+                Camera.main.GetComponent<CameraFocus>().CleanTarget();
+                if (uiManager != null) uiManager.HidePanel();
             }
         }
     }
