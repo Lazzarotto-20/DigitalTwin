@@ -1,5 +1,6 @@
-using UnityEngine;
+using System.ComponentModel;
 using TMPro; // Library to manipulate texts of TextMeshPro
+using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class UIManager : MonoBehaviour
     [Header("Main Panel")]
     public GameObject infoPanel;
 
+    private ComponentInteractable currentComponent; // Stores the part currently selected.
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -20,32 +23,34 @@ public class UIManager : MonoBehaviour
 
     public void ShowInformations(ComponentInteractable component)
     {
+        currentComponent = component; // Guards the part in memory.
         infoPanel.SetActive(true); // activate the panel's visualization
-
-        // Updates the texts with the script's information of the selected part
-        txtName.text = component.componentName;
-        txtTelemetry.text = $"Temp: {component.temperature:F1}°C\nPression: {component.pressure:F1} bar";
-
-        if (component.isOperational)
-        {
-            txtStatus.text = "Status: OPERATIONAL";
-            txtStatus.color = Color.green;
-        }
-        else
-        {
-            txtStatus.text = "Status: FAILURE DETECTED";
-            txtStatus.color = Color.red;
-        }
     }
 
     public void HidePanel()
     {
+        currentComponent = null;
         infoPanel.SetActive(false); // Turns off the panel's visualization
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (currentComponent != null)
+        {
+            txtName.text = currentComponent.componentName; ;
+            txtTelemetry.text = $"Temp: {currentComponent.currentTemperature:F1}°C\nPression: {currentComponent.currentPressure:F1} bar";
+
+            if (currentComponent.isOperational)
+            {
+                txtStatus.text = "Status: OPERATIONAL";
+                txtStatus.color = Color.green;
+            }
+            else
+            {
+                txtStatus.text = "Status: FAILURE DETECTED";
+                txtStatus.color = Color.red;
+            }
+        }
     }
 }
